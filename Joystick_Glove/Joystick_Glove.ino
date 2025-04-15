@@ -27,15 +27,9 @@ const uint8_t inPin[3] = { 27, 14, 12 };  // Touch pins on index finger
 // 1 4 3
 // 6 2 8
 
-int mt = 500;
 int ttv = 3500;   // Thumb touch trigger value
 int itv = 500;    // Index touch trigger value
 int mtv = 1800;   // Multiple touch threshold value
-int jat = 100;    // Wait time to avoid touch jerk
-int tbm = 500;    // Time before movement
-int rt = 10;      // Touch relaxation time
-int cf = 15;      // Cursor movement multiplier factor
-float st = 0.5;   // Touch movement threshold value
 
 void setup() {
   Serial.begin(115200);
@@ -106,44 +100,38 @@ void loop() {
   i1 = analogRead(inPin[0]);
   i2 = analogRead(inPin[1]);
   i3 = analogRead(inPin[2]);
-  if (t1 > mtv && t2 > mtv)
-    Serial.print("rl:0,ru:4096,"),
-    Serial.printf("t1:%d,t2:%d,i1:%d,i2:%d,i3:%d\n", t1, t2, i1, i2, i3);
+  // if (t1 > ttv && t2 > ttv)
+  //   Serial.print("rl:0,ru:4096,"),
+  //   Serial.printf("t1:%d,t2:%d,i1:%d,i2:%d,i3:%d\n", t1, t2, i1, i2, i3);
   if (t1 < mtv || t2 < mtv) { bleGamepad.resetButtons(); }
   else if (i1 > itv && t1 < ttv) {
-    Serial.println("▢");
+    Serial.println("▢ Pressed");
     // Serial.printf("%d\t%d\n", i1, t1);
     bleGamepad.press(1);
-    // pressMoveRelease(inPin[0], MOUSE_LEFT);
   } else if (i2 > itv && t1 < ttv) {
-    Serial.println("△");
+    Serial.println("△ Pressed");
     // Serial.printf("%d\t%d\n", i2, t1);
     bleGamepad.press(4);
-    // clickOrVary(inPin[1], MOUSE_LEFT);
   } else if (i3 > itv && t1 < ttv) {
-    Serial.println("○");
+    Serial.println("○ Pressed");
     // Serial.printf("%d\t%d\n", i3, t1);
     bleGamepad.press(3);
-    // pressMoveRelease(inPin[2], MOUSE_RIGHT);
   } else if (i1 > itv && t2 < ttv) {
-    Serial.print("R1");
+    Serial.println("R1 Pressed");
     // Serial.printf("%d\t%d\n", i1, t2);
     bleGamepad.press(6);
-    // clickOrVary(inPin[0], KEY_MEDIA_MUTE, KEY_MEDIA_VOLUME_DOWN, KEY_MEDIA_VOLUME_UP);
   } else if (i2 > itv && t2 < ttv) {
-    Serial.print("X");
+    Serial.println("X Pressed");
     // Serial.printf("%d\t%d\n", i2, t2);
     bleGamepad.press(2);
-    // pressMoveRelease(inPin[0], MOUSE_MIDDLE);
   } else if (i3 > itv && t2 < ttv) {
-    Serial.print("R2");
+    Serial.println("R2 Pressed");
     // Serial.printf("%d\t%d\n", i3, t2);
     bleGamepad.setLeftTrigger(bleGamepadConfig.getAxesMax());
-    // clickOrVary(inPin[2], KEY_MEDIA_PLAY_PAUSE, KEY_MEDIA_PREVIOUS_TRACK, KEY_MEDIA_NEXT_TRACK);
   }
   else 
     bleGamepad.resetButtons(),
-    bleGamepad.setLeftTrigger(bleGamepadConfig.getAxesMin()); // Reset all axes to zero
+    bleGamepad.setLeftTrigger(bleGamepadConfig.getAxesMin());
   bleGamepad.sendReport();
   delay(100);
 }
